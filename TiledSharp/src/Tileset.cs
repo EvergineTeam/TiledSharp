@@ -24,11 +24,12 @@ namespace TiledSharp
         public PropertyDict Properties {get; private set;}
 
         // TSX file constructor
-        public TmxTileset(XDocument xDoc, string tmxDir) :
-            this(xDoc.Element("tileset"), tmxDir) { }
+        public TmxTileset(IDocumentLoader loader, XDocument xDoc, string tmxDir) :
+            this(loader, xDoc.Element("tileset"), tmxDir) { }
 
         // TMX tileset element constructor
-        public TmxTileset(XElement xTileset, string tmxDir = "")
+        public TmxTileset(IDocumentLoader loader, XElement xTileset, string tmxDir = "")
+            : base(loader)
         {
             var xFirstGid = xTileset.Attribute("firstgid");
             var source = (string)xTileset.Attribute("source");
@@ -43,7 +44,7 @@ namespace TiledSharp
 
                 // Everything else is in the TSX file
                 var xDocTileset = ReadXml(source);
-                var ts = new TmxTileset(xDocTileset, TmxDirectory);
+                var ts = new TmxTileset(loader, xDocTileset, TmxDirectory);
 
                 Name = ts.Name;
                 TileWidth = ts.TileWidth;

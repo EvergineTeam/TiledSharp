@@ -1,3 +1,4 @@
+using Ionic.Zlib;
 // Distributed as part of TiledSharp, Copyright 2012 Marshall Ward
 // Licensed under the Apache License, Version 2.0
 // http://www.apache.org/licenses/LICENSE-2.0
@@ -6,41 +7,26 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
-using System.Reflection;
 using System.Xml.Linq;
 
 namespace TiledSharp
 {
     public class TmxDocument
     {
-        public string TmxDirectory {get; private set;}
+        private IDocumentLoader loader;
+
+        public string TmxDirectory { get; private set; }
+
+        public TmxDocument(IDocumentLoader loader)
+        {
+            this.loader = loader;
+        }
 
         protected XDocument ReadXml(string filepath)
         {
-            XDocument xDoc;
-
-            var asm = Assembly.GetExecutingAssembly();
-            var manifest = asm.GetManifestResourceNames();
-
-            var fileResPath = filepath.Replace(
-                    Path.DirectorySeparatorChar.ToString(), ".");
-            var fileRes = Array.Find(manifest, s => s.EndsWith(fileResPath));
-
-            // If there is a resource in the assembly, load the resource
-            // Otherwise, assume filepath is an explicit path
-            if (fileRes != null)
-            {
-                Stream xmlStream = asm.GetManifestResourceStream(fileRes);
-                xDoc = XDocument.Load(xmlStream);
-                TmxDirectory = "";
-            }
-            else
-            {
-                xDoc = XDocument.Load(filepath);
-                TmxDirectory = Path.GetDirectoryName(filepath);
-            }
+            XDocument xDoc = this.loader.Load(filepath);
+            this.TmxDirectory = Path.GetDirectoryName(filepath);
 
             return xDoc;
         }
@@ -48,7 +34,7 @@ namespace TiledSharp
 
     public interface ITmxElement
     {
-        string Name {get;}
+        string Name { get; }
     }
 
     public class TmxList<T> : KeyedCollection<string, T> where T : ITmxElement
@@ -59,7 +45,7 @@ namespace TiledSharp
         public new void Add(T t)
         {
             // Rename duplicate entries by appending a number
-            var key = Tuple.Create<TmxList<T>, string> (this, t.Name);
+            var key = Tuple.Create<TmxList<T>, string>(this, t.Name);
             if (this.Contains(t.Name))
                 nameCount[key] += 1;
             else
@@ -69,7 +55,7 @@ namespace TiledSharp
 
         protected override string GetKeyForItem(T t)
         {
-            var key = Tuple.Create<TmxList<T>, string> (this, t.Name);
+            var key = Tuple.Create<TmxList<T>, string>(this, t.Name);
             var count = nameCount[key];
 
             var dupes = 0;
@@ -77,7 +63,8 @@ namespace TiledSharp
 
             // For duplicate keys, append a counter
             // For pathological cases, insert underscores to ensure uniqueness
-            while (Contains(itemKey)) {
+            while (Contains(itemKey))
+            {
                 itemKey = t.Name + String.Concat(Enumerable.Repeat("_", dupes))
                             + count;
                 dupes++;
@@ -104,12 +91,12 @@ namespace TiledSharp
 
     public class TmxImage
     {
-        public string Format {get; private set;}
-        public string Source {get; private set;}
-        public Stream Data {get; private set;}
-        public TmxColor Trans {get; private set;}
-        public int? Width {get; private set;}
-        public int? Height {get; private set;}
+        public string Format { get; private set; }
+        public string Source { get; private set; }
+        public Stream Data { get; private set; }
+        public TmxColor Trans { get; private set; }
+        public int? Width { get; private set; }
+        public int? Height { get; private set; }
 
         public TmxImage(XElement xImage, string tmxDir = "")
         {
@@ -120,7 +107,8 @@ namespace TiledSharp
             if (xSource != null)
                 // Append directory if present
                 Source = Path.Combine(tmxDir, (string)xSource);
-            else {
+            else
+            {
                 Format = (string)xImage.Attribute("format");
                 var xData = xImage.Element("data");
                 var decodedStream = new TmxBase64Data(xData);
@@ -153,7 +141,7 @@ namespace TiledSharp
 
     public class TmxBase64Data
     {
-        public Stream Data {get; private set;}
+        public Stream Data { get; private set; }
 
         public TmxBase64Data(XElement xData)
         {

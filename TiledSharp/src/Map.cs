@@ -23,7 +23,8 @@ namespace TiledSharp
         public TmxList<TmxImageLayer> ImageLayers {get; private set;}
         public PropertyDict Properties {get; private set;}
 
-        public TmxMap(string filename)
+        public TmxMap(IDocumentLoader loader, string filename)
+            : base(loader)
         {
             XDocument xDoc = ReadXml(filename);
             var xMap = xDoc.Element("map");
@@ -41,7 +42,7 @@ namespace TiledSharp
 
             Tilesets = new TmxList<TmxTileset>();
             foreach (var e in xMap.Elements("tileset"))
-                Tilesets.Add(new TmxTileset(e, TmxDirectory));
+                Tilesets.Add(new TmxTileset(loader, e, TmxDirectory));
 
             Layers = new TmxList<TmxLayer>();
             foreach (var e in xMap.Elements("layer"))
