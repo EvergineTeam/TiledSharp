@@ -11,12 +11,12 @@ namespace TiledSharp
     {
         public string Version {get; private set;}
         public OrientationType Orientation {get; private set;}
+        public RenderOrderType RenderOrder { get; private set; }
         public int Width {get; private set;}
         public int Height {get; private set;}
         public int TileWidth {get; private set;}
         public int TileHeight {get; private set;}
         public TmxColor BackgroundColor {get; private set;}
-
         public TmxList<TmxTileset> Tilesets {get; private set;}
         public TmxList<TmxLayer> Layers {get; private set;}
         public TmxList<TmxObjectGroup> ObjectGroups {get; private set;}
@@ -33,6 +33,10 @@ namespace TiledSharp
             Orientation = (OrientationType) Enum.Parse(
                                     typeof(OrientationType),
                                     xMap.Attribute("orientation").Value,
+                                    true);
+            RenderOrder = (RenderOrderType)Enum.Parse(
+                                    typeof(RenderOrderType), 
+                                    xMap.Attribute("renderorder").Value.Replace('-', '_'), 
                                     true);
             Width = (int)xMap.Attribute("width");
             Height = (int)xMap.Attribute("height");
@@ -64,6 +68,14 @@ namespace TiledSharp
             Orthogonal,
             Isometric,
             Staggered
+        }
+
+        public enum RenderOrderType
+        {
+            Right_Down,
+            Right_Up,
+            Left_Down,
+            Left_Up
         }
     }
 }

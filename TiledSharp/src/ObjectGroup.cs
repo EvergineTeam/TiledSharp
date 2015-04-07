@@ -39,10 +39,10 @@ namespace TiledSharp
             public string Name {get; private set;}
             public TmxObjectType ObjectType {get; private set;}
             public string Type {get; private set;}
-            public int X {get; private set;}
-            public int Y {get; private set;}
-            public int Width {get; private set;}
-            public int Height {get; private set;}
+            public float X {get; private set;}
+            public float Y { get; private set; }
+            public float Width { get; private set; }
+            public float Height { get; private set; }
             public double Rotation {get; private set;}
             public TmxLayerTile Tile {get; private set;}
             public bool Visible {get; private set;}
@@ -54,11 +54,11 @@ namespace TiledSharp
             {
                 Name = (string)xObject.Attribute("name") ?? "";
                 Type = (string)xObject.Attribute("type");
-                X = (int)xObject.Attribute("x");
-                Y = (int)xObject.Attribute("y");
+                X = (float)xObject.Attribute("x");
+                Y = (float)xObject.Attribute("y");
                 Visible = (bool?)xObject.Attribute("visible") ?? true;
-                Width = (int?)xObject.Attribute("width") ?? 0;
-                Height = (int?)xObject.Attribute("height") ?? 0;
+                Width = (float?)xObject.Attribute("width") ?? 0;
+                Height = (float?)xObject.Attribute("height") ?? 0;
                 Rotation = (double?)xObject.Attribute("rotation") ?? 0.0;
 
                 // Assess object type and assign appropriate content
@@ -69,7 +69,7 @@ namespace TiledSharp
 
                 if (xGid != null)
                 {
-                    Tile = new TmxLayerTile((uint)xGid, X, Y);
+                    Tile = new TmxLayerTile((uint)xGid, (int)X, (int)Y);
                     ObjectType = TmxObjectType.Tile;
                 }
                 else if (xEllipse != null)
