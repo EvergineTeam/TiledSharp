@@ -12,6 +12,7 @@ namespace TiledSharp
     {
         public string Name {get; private set;}
         public TmxColor Color {get; private set;}
+        public DrawOrderType DrawOrder {get; private set;}
         public double Opacity {get; private set;}
         public bool Visible {get; private set;}
 
@@ -20,10 +21,20 @@ namespace TiledSharp
 
         public TmxObjectGroup(XElement xObjectGroup)
         {
-            Name = (string)xObjectGroup.Attribute("name");
+            Name = (string)xObjectGroup.Attribute("name") ?? "";
             Color = new TmxColor(xObjectGroup.Attribute("color"));
             Opacity = (double?)xObjectGroup.Attribute("opacity") ?? 1.0;
             Visible = (bool?)xObjectGroup.Attribute("visible") ?? true;
+
+            var drawOrderDict = new Dictionary<string, DrawOrderType> {
+                {"unknown", DrawOrderType.UnknownOrder},
+                {"topdown", DrawOrderType.IndexOrder},
+                {"index", DrawOrderType.TopDown}
+            };
+
+            var drawOrderValue = (string) xObjectGroup.Attribute("draworder");
+            if (drawOrderValue != null)
+                DrawOrder = drawOrderDict[drawOrderValue];
 
             Objects = new TmxList<TmxObject>();
             foreach (var e in xObjectGroup.Elements("object"))
@@ -39,26 +50,26 @@ namespace TiledSharp
             public string Name {get; private set;}
             public TmxObjectType ObjectType {get; private set;}
             public string Type {get; private set;}
-            public float X {get; private set;}
-            public float Y { get; private set; }
-            public float Width { get; private set; }
-            public float Height { get; private set; }
-            public double Rotation {get; private set;}
+            public double X {get; private set;}
+            public double Y { get; private set; }
+            public double Width { get; private set; }
+            public double Height { get; private set; }
+            public double Rotation { get; private set; }
             public TmxLayerTile Tile {get; private set;}
             public bool Visible {get; private set;}
 
-            public List<Tuple<int,int>> Points {get; private set;}
+            public List<Tuple<double, double>> Points { get; private set; }
             public PropertyDict Properties {get; private set;}
 
             public TmxObject(XElement xObject)
             {
                 Name = (string)xObject.Attribute("name") ?? "";
-                Type = (string)xObject.Attribute("type");
-                X = (float)xObject.Attribute("x");
-                Y = (float)xObject.Attribute("y");
+                X = (double)xObject.Attribute("x");
+                Y = (double)xObject.Attribute("y");
+                Width = (double?)xObject.Attribute("width") ?? 0.0;
+                Height = (double?)xObject.Attribute("height") ?? 0.0;
+                Type = (string)xObject.Attribute("type") ?? "";
                 Visible = (bool?)xObject.Attribute("visible") ?? true;
-                Width = (float?)xObject.Attribute("width") ?? 0;
-                Height = (float?)xObject.Attribute("height") ?? 0;
                 Rotation = (double?)xObject.Attribute("rotation") ?? 0.0;
 
                 // Assess object type and assign appropriate content
@@ -69,7 +80,7 @@ namespace TiledSharp
 
                 if (xGid != null)
                 {
-                    Tile = new TmxLayerTile((uint)xGid, (int)X, (int)Y);
+                    Tile = new TmxLayerTile((uint)xGid, (int)X, (int)X);
                     ObjectType = TmxObjectType.Tile;
                 }
                 else if (xEllipse != null)
@@ -91,30 +102,37 @@ namespace TiledSharp
                 Properties = new PropertyDict(xObject.Element("properties"));
             }
 
-            public List<Tuple<int, int>> ParsePoints(XElement xPoints)
+            public List<Tuple<double, double>> ParsePoints(XElement xPoints)
             {
-                var points = new List<Tuple<int, int>>();
+                var points = new List<Tuple<double, double>>();
 
                 var pointString = (string)xPoints.Attribute("points");
                 var pointStringPair = pointString.Split(' ');
                 foreach (var s in pointStringPair)
                 {
                     var pt = s.Split(',');
-                    var x = int.Parse(pt[0]);
-                    var y = int.Parse(pt[1]);
-                    points.Add(Tuple.Create<int, int>(x, y));
+                    var x = double.Parse(pt[0]);
+                    var y = double.Parse(pt[1]);
+                    points.Add(Tuple.Create<double, double>(x, y));
                 }
                 return points;
             }
         }
 
-        public enum TmxObjectType : byte
+        public enum TmxObjectType
         {
             Basic,
             Tile,
             Ellipse,
             Polygon,
             Polyline
+        }
+
+        public enum DrawOrderType
+        {
+            UnknownOrder = -1,
+            TopDown,
+            IndexOrder
         }
     }
 }

@@ -8,6 +8,9 @@ using System.Xml.Linq;
 
 namespace TiledSharp
 {
+    // TODO: The design here is all wrong. A Tileset should be a list of tiles,
+    //       it shouldn't force the user to do so much tile ID management
+
     public class TmxTileset : TmxDocument, ITmxElement
     {
         public int FirstGid {get; private set;}
@@ -17,11 +20,11 @@ namespace TiledSharp
         public int Spacing {get; private set;}
         public int Margin {get; private set;}
 
+        public List<TmxTilesetTile> Tiles {get; private set;}
         public TmxTileOffset TileOffset {get; private set;}
+        public PropertyDict Properties {get; private set;}
         public TmxImage Image {get; private set;}
         public TmxList<TmxTerrain> Terrains {get; private set;}
-        public List<TmxTilesetTile> Tiles {get; private set;}
-        public PropertyDict Properties {get; private set;}
 
         // TSX file constructor
         public TmxTileset(IDocumentLoader loader, XDocument xDoc, string tmxDir) :
@@ -32,7 +35,7 @@ namespace TiledSharp
             : base(loader)
         {
             var xFirstGid = xTileset.Attribute("firstgid");
-            var source = (string)xTileset.Attribute("source");
+            var source = (string) xTileset.Attribute("source");
 
             if (source != null)
             {
@@ -40,7 +43,7 @@ namespace TiledSharp
                 source = Path.Combine(tmxDir, source);
 
                 // source is always preceded by firstgid
-                FirstGid = (int)xFirstGid;
+                FirstGid = (int) xFirstGid;
 
                 // Everything else is in the TSX file
                 var xDocTileset = ReadXml(source);
@@ -61,13 +64,13 @@ namespace TiledSharp
             {
                 // firstgid is always in TMX, but not TSX
                 if (xFirstGid != null)
-                    FirstGid = (int)xFirstGid;
+                    FirstGid = (int) xFirstGid;
 
-                Name = (string)xTileset.Attribute("name");
-                TileWidth = (int)xTileset.Attribute("tilewidth");
-                TileHeight = (int)xTileset.Attribute("tileheight");
-                Spacing = (int?)xTileset.Attribute("spacing") ?? 0;
-                Margin = (int?)xTileset.Attribute("margin") ?? 0;
+                Name = (string) xTileset.Attribute("name");
+                TileWidth = (int) xTileset.Attribute("tilewidth");
+                TileHeight = (int) xTileset.Attribute("tileheight");
+                Spacing = (int?) xTileset.Attribute("spacing") ?? 0;
+                Margin = (int?) xTileset.Attribute("margin") ?? 0;
 
                 TileOffset = new TmxTileOffset(xTileset.Element("tileoffset"));
                 Image = new TmxImage(xTileset.Element("image"), tmxDir);
@@ -129,8 +132,10 @@ namespace TiledSharp
         public List<TmxTerrain> TerrainEdges {get; private set;}
         public double Probability {get; private set;}
 
-        public TmxImage Image {get; private set;}
         public PropertyDict Properties {get; private set;}
+        public TmxImage Image {get; private set;}
+        public TmxList<TmxObjectGroup> ObjectGroups {get; private set;}
+        public List<TmxAnimationFrame> AnimationFrames {get; private set;}
 
         // Human-readable aliases to the Terrain markers
         public TmxTerrain TopLeft {
@@ -170,7 +175,32 @@ namespace TiledSharp
 
             Probability = (double?)xTile.Attribute("probability") ?? 1.0;
             Image = new TmxImage(xTile.Element("image"), tmxDir);
+
+            ObjectGroups = new TmxList<TmxObjectGroup>();
+            foreach (var e in xTile.Elements("objectgroup"))
+                ObjectGroups.Add(new TmxObjectGroup(e));
+
+            AnimationFrames = new List<TmxAnimationFrame>();
+            if (xTile.Element("animation") != null) {
+                foreach (var e in xTile.Element("animation").Elements("frame"))
+                    AnimationFrames.Add(new TmxAnimationFrame(e));
+            }
+
             Properties = new PropertyDict(xTile.Element("properties"));
         }
     }
+
+    public class TmxAnimationFrame
+    {
+        public int Id {get; private set;}
+        public int Duration {get; private set;}
+
+        public TmxAnimationFrame(XElement xFrame)
+        {
+            Id = (int)xFrame.Attribute("tileid");
+            Duration = (int)xFrame.Attribute("duration");
+        }
+    }
+
+
 }
