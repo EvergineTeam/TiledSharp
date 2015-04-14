@@ -1,61 +1,62 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
+    <MinimumVisualStudioVersion>10.0</MinimumVisualStudioVersion>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{E4130F8D-D301-4E0C-916D-489C4A23C9B1}</ProjectGuid>
+    <ProjectGuid>{267F2240-5149-4465-B9FB-56517D785751}</ProjectGuid>
     <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TiledSharp</RootNamespace>
     <AssemblyName>TiledSharp</AssemblyName>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <TargetFrameworkProfile>Profile78</TargetFrameworkProfile>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG</DefineConstants>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Release</OutputPath>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Core" />
+    <Compile Include="src\AssemblyInfo.cs" />
+    <Compile Include="src\IDocumentLoader.cs" />
+    <Compile Include="src\ImageLayer.cs" />
+    <Compile Include="src\Layer.cs" />
+    <Compile Include="src\Map.cs" />
+    <Compile Include="src\ObjectGroup.cs" />
+    <Compile Include="src\TiledCore.cs" />
+    <Compile Include="src\Tileset.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="src\IDocumentLoader.cs" />
-    <Compile Include="src\TiledCore.cs" />
-    <Compile Include="src\Map.cs" />
-    <Compile Include="src\Layer.cs" />
-    <Compile Include="src\Tileset.cs" />
-    <Compile Include="src\AssemblyInfo.cs" />
-    <Compile Include="src\zlib\CRC32.cs" />
-    <Compile Include="src\zlib\Deflate.cs" />
-    <Compile Include="src\zlib\DeflateStream.cs" />
-    <Compile Include="src\zlib\GZipStream.cs" />
-    <Compile Include="src\zlib\InfTree.cs" />
-    <Compile Include="src\zlib\Inflate.cs" />
-    <Compile Include="src\zlib\ParallelDeflateOutputStream.cs" />
-    <Compile Include="src\zlib\Tree.cs" />
-    <Compile Include="src\zlib\Zlib.cs" />
-    <Compile Include="src\zlib\ZlibBaseStream.cs" />
-    <Compile Include="src\zlib\ZlibCodec.cs" />
-    <Compile Include="src\zlib\ZlibConstants.cs" />
-    <Compile Include="src\zlib\ZlibStream.cs" />
-    <Compile Include="src\ObjectGroup.cs" />
-    <Compile Include="src\ImageLayer.cs" />
+    <Folder Include="Properties\" />
   </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Reference Include="Zlib.Portable">
+      <HintPath>Libraries\Zlib.Portable.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
 </Project>
