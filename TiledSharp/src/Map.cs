@@ -49,12 +49,17 @@ namespace TiledSharp
                         true);
 
             // Tile render order
-            var renderOrderAttr = xMap.Attribute("renderorder").Value.Replace("-", "");
+            var renderOrderAttr = xMap.Attribute("renderorder");
 
-            RenderOrder = (RenderOrderType)Enum.Parse(
-                                    typeof(RenderOrderType),
-                                    renderOrderAttr,
-                                    true);
+            if (renderOrderAttr != null)
+            {
+                var renderStr = renderOrderAttr.Value.Replace("-", "");
+
+                RenderOrder = (RenderOrderType)Enum.Parse(
+                                        typeof(RenderOrderType),
+                                        renderStr,
+                                        true);
+            }
 
             // Hexagonal stagger axis
             var staggerAxisDict = new Dictionary<string, StaggerAxisType> {
