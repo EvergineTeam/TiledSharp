@@ -22,8 +22,8 @@ namespace TiledSharp
         public TmxImageLayer(XElement xImageLayer, string tmxDir = "")
         {
             Name = (string) xImageLayer.Attribute("name");
-            Width = (int) xImageLayer.Attribute("width");
-            Height = (int) xImageLayer.Attribute("height");
+            Width = (int?) xImageLayer.Attribute("width") ?? 0;
+            Height = (int?) xImageLayer.Attribute("height") ?? 0;
             Visible = (bool?) xImageLayer.Attribute("visible") ?? true;
             Opacity = (double?) xImageLayer.Attribute("opacity") ?? 1.0;
 
