@@ -58,7 +58,7 @@ namespace TiledSharp
             public TmxLayerTile Tile {get; private set;}
             public bool Visible {get; private set;}
 
-            public List<Tuple<double, double>> Points { get; private set; }
+            public List<TmxObjectPoint> Points {get; private set;}
             public PropertyDict Properties {get; private set;}
 
             public TmxObject(XElement xObject)
@@ -102,18 +102,16 @@ namespace TiledSharp
                 Properties = new PropertyDict(xObject.Element("properties"));
             }
 
-            public List<Tuple<double, double>> ParsePoints(XElement xPoints)
+            public List<TmxObjectPoint> ParsePoints(XElement xPoints)
             {
-                var points = new List<Tuple<double, double>>();
+                var points = new List<TmxObjectPoint>();
 
                 var pointString = (string)xPoints.Attribute("points");
                 var pointStringPair = pointString.Split(' ');
                 foreach (var s in pointStringPair)
                 {
-                    var pt = s.Split(',');
-                    var x = double.Parse(pt[0]);
-                    var y = double.Parse(pt[1]);
-                    points.Add(Tuple.Create<double, double>(x, y));
+                    var pt = new TmxObjectPoint(s);
+                    points.Add(pt);
                 }
                 return points;
             }
@@ -133,6 +131,25 @@ namespace TiledSharp
             UnknownOrder = -1,
             TopDown,
             IndexOrder
+        }
+    }
+
+    public class TmxObjectPoint
+    {
+        public double X {get; private set;}
+        public double Y {get; private set;}
+
+        public TmxObjectPoint(double x, double y)
+        {
+            X = x;
+            Y = y;
+        }
+
+        public TmxObjectPoint(string s)
+        {
+            var pt = s.Split(',');
+            X = double.Parse(pt[0]);
+            Y = double.Parse(pt[1]);
         }
     }
 }
