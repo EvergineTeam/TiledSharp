@@ -73,8 +73,7 @@ namespace TiledSharp
             return name;
         }
     }
-
-    [Serializable]
+    
     public class PropertyDict : Dictionary<string, string>
     {
         public PropertyDict(XContainer xmlProp)
@@ -124,6 +123,7 @@ namespace TiledSharp
 
     public class TmxColor
     {
+        public int A { get; private set; }
         public int R {get; private set;}
         public int G {get; private set;}
         public int B {get; private set;}
@@ -134,9 +134,20 @@ namespace TiledSharp
 
             var colorStr = ((string)xColor).TrimStart("#".ToCharArray());
 
-            R = int.Parse(colorStr.Substring(0, 2), NumberStyles.HexNumber);
-            G = int.Parse(colorStr.Substring(2, 2), NumberStyles.HexNumber);
-            B = int.Parse(colorStr.Substring(4, 2), NumberStyles.HexNumber);
+            if (colorStr.Length == 6)
+            {
+                A = 255;
+                R = int.Parse(colorStr.Substring(0, 2), NumberStyles.HexNumber);
+                G = int.Parse(colorStr.Substring(2, 2), NumberStyles.HexNumber);
+                B = int.Parse(colorStr.Substring(4, 2), NumberStyles.HexNumber);
+            }
+            else
+            {
+                A = int.Parse(colorStr.Substring(0, 2), NumberStyles.HexNumber);
+                R = int.Parse(colorStr.Substring(2, 2), NumberStyles.HexNumber);
+                G = int.Parse(colorStr.Substring(4, 2), NumberStyles.HexNumber);
+                B = int.Parse(colorStr.Substring(6, 2), NumberStyles.HexNumber);
+            }
         }
     }
 

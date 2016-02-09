@@ -11,6 +11,8 @@ namespace TiledSharp
         public string Name {get; private set;}
         public int? Width {get; private set;}
         public int? Height {get; private set;}
+        public double OffsetX { get; private set; }
+        public double OffsetY { get; private set; }
 
         public bool Visible {get; private set;}
         public double Opacity {get; private set;}
@@ -27,6 +29,8 @@ namespace TiledSharp
             Height = (int?) xImageLayer.Attribute("height");
             Visible = (bool?) xImageLayer.Attribute("visible") ?? true;
             Opacity = (double?) xImageLayer.Attribute("opacity") ?? 1.0;
+            OffsetX = (double?)xImageLayer.Attribute("offsetx") ?? 0.0;
+            OffsetY = (double?)xImageLayer.Attribute("offsety") ?? 0.0;
 
             Image = new TmxImage(xImageLayer.Element("image"), tmxDir);
 

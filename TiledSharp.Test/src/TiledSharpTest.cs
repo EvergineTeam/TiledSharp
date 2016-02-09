@@ -17,8 +17,9 @@ namespace TiledSharpTesting
         public void VersionTest()
         {
             var mapPath = GetAssetPath("minimal.tmx");
+            var documentLoader = new DefaultDocumentLoader();
 
-            TmxMap map = new TmxMap(mapPath);
+            TmxMap map = new TmxMap(documentLoader, mapPath);
             string version = map.Version;
             Assert.AreEqual(version, "1.0");
         }

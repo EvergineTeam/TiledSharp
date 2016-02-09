@@ -16,6 +16,8 @@ namespace TiledSharp
         public DrawOrderType DrawOrder {get; private set;}
         public double Opacity {get; private set;}
         public bool Visible {get; private set;}
+        public double OffsetX { get; private set; }
+        public double OffsetY { get; private set; }
 
         public TmxList<TmxObject> Objects {get; private set;}
         public PropertyDict Properties {get; private set;}
@@ -26,6 +28,8 @@ namespace TiledSharp
             Color = new TmxColor(xObjectGroup.Attribute("color"));
             Opacity = (double?)xObjectGroup.Attribute("opacity") ?? 1.0;
             Visible = (bool?)xObjectGroup.Attribute("visible") ?? true;
+            OffsetX = (double?)xObjectGroup.Attribute("offsetx") ?? 0.0;
+            OffsetY = (double?)xObjectGroup.Attribute("offsety") ?? 0.0;
 
             var drawOrderDict = new Dictionary<string, DrawOrderType> {
                 {"unknown", DrawOrderType.UnknownOrder},
