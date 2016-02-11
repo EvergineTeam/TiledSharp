@@ -6,11 +6,12 @@ using System.Xml.Linq;
 
 namespace TiledSharp
 {
-    public class TmxImageLayer : ITmxElement
+    public class TmxImageLayer : ITmxElement, ITmxLayer
     {
         public string Name {get; private set;}
         public int? Width {get; private set;}
         public int? Height {get; private set;}
+        public int OrderIndex { get; private set; }
         public double OffsetX { get; private set; }
         public double OffsetY { get; private set; }
 
@@ -21,7 +22,9 @@ namespace TiledSharp
 
         public PropertyDict Properties {get; private set;}
 
-        public TmxImageLayer(XElement xImageLayer, string tmxDir = "")
+        
+
+        public TmxImageLayer(XElement xImageLayer, int orderIndex, string tmxDir = "")
         {
             Name = (string) xImageLayer.Attribute("name");
 
@@ -31,6 +34,7 @@ namespace TiledSharp
             Opacity = (double?) xImageLayer.Attribute("opacity") ?? 1.0;
             OffsetX = (double?)xImageLayer.Attribute("offsetx") ?? 0.0;
             OffsetY = (double?)xImageLayer.Attribute("offsety") ?? 0.0;
+            OrderIndex = orderIndex;
 
             Image = new TmxImage(xImageLayer.Element("image"), tmxDir);
 

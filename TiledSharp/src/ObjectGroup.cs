@@ -9,20 +9,21 @@ using System.Xml.Linq;
 
 namespace TiledSharp
 {
-    public class TmxObjectGroup : ITmxElement
+    public class TmxObjectGroup : ITmxElement, ITmxLayer
     {
         public string Name {get; private set;}
         public TmxColor Color {get; private set;}
         public DrawOrderType DrawOrder {get; private set;}
         public double Opacity {get; private set;}
         public bool Visible {get; private set;}
+        public int OrderIndex { get; private set; }
         public double OffsetX { get; private set; }
         public double OffsetY { get; private set; }
 
         public TmxList<TmxObject> Objects {get; private set;}
         public PropertyDict Properties {get; private set;}
 
-        public TmxObjectGroup(XElement xObjectGroup)
+        public TmxObjectGroup(XElement xObjectGroup, int orderIndex)
         {
             Name = (string)xObjectGroup.Attribute("name") ?? String.Empty;
             Color = new TmxColor(xObjectGroup.Attribute("color"));
@@ -30,6 +31,7 @@ namespace TiledSharp
             Visible = (bool?)xObjectGroup.Attribute("visible") ?? true;
             OffsetX = (double?)xObjectGroup.Attribute("offsetx") ?? 0.0;
             OffsetY = (double?)xObjectGroup.Attribute("offsety") ?? 0.0;
+            OrderIndex = orderIndex;
 
             var drawOrderDict = new Dictionary<string, DrawOrderType> {
                 {"unknown", DrawOrderType.UnknownOrder},

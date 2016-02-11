@@ -84,23 +84,35 @@ namespace TiledSharp
             NextObjectID = (int?)xMap.Attribute("nextobjectid");
             BackgroundColor = new TmxColor(xMap.Attribute("backgroundcolor"));
 
-            Properties = new PropertyDict(xMap.Element("properties"));
-
             Tilesets = new TmxList<TmxTileset>();
-            foreach (var e in xMap.Elements("tileset"))
-                Tilesets.Add(new TmxTileset(loader, e, TmxDirectory));
-
             Layers = new TmxList<TmxLayer>();
-            foreach (var e in xMap.Elements("layer"))
-                Layers.Add(new TmxLayer(e, Width, Height));
-
             ObjectGroups = new TmxList<TmxObjectGroup>();
-            foreach (var e in xMap.Elements("objectgroup"))
-                ObjectGroups.Add(new TmxObjectGroup(e));
-
             ImageLayers = new TmxList<TmxImageLayer>();
-            foreach (var e in xMap.Elements("imagelayer"))
-                ImageLayers.Add(new TmxImageLayer(e, TmxDirectory));
+
+            var orderIndex = 0;
+            foreach (var child in xMap.Elements())
+            {
+                switch (child.Name.LocalName)
+                {
+                    case "properties":
+                        Properties = new PropertyDict(child);
+                        break;
+                    case "tileset":
+                        Tilesets.Add(new TmxTileset(loader, child, TmxDirectory));
+                        break;
+                    case "layer":
+                        Layers.Add(new TmxLayer(child, Width, Height, orderIndex++));
+                        break;
+                    case "objectgroup":
+                        ObjectGroups.Add(new TmxObjectGroup(child, orderIndex++));
+                        break;
+                    case "imagelayer":
+                        ImageLayers.Add(new TmxImageLayer(child, orderIndex++, TmxDirectory));
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
     }
 

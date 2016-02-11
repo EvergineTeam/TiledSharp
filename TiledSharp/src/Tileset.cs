@@ -182,8 +182,11 @@ namespace TiledSharp
             Image = new TmxImage(xTile.Element("image"), tmxDir);
 
             ObjectGroups = new TmxList<TmxObjectGroup>();
+
+            var orderIndex = 0;
+
             foreach (var e in xTile.Elements("objectgroup"))
-                ObjectGroups.Add(new TmxObjectGroup(e));
+                ObjectGroups.Add(new TmxObjectGroup(e, orderIndex++));
 
             AnimationFrames = new Collection<TmxAnimationFrame>();
             if (xTile.Element("animation") != null) {

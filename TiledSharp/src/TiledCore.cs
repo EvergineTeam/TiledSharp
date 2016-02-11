@@ -38,6 +38,15 @@ namespace TiledSharp
         string Name { get; }
     }
 
+    public interface ITmxLayer
+    {
+        int OrderIndex { get; }
+
+        double OffsetX { get; }
+
+        double OffsetY { get; }
+    }
+
     public class TmxList<T> : KeyedCollection<string, T> where T : ITmxElement
     {
         private Dictionary<string, int> nameCount

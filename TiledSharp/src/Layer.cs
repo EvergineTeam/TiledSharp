@@ -8,24 +8,26 @@ using System.IO;
 
 namespace TiledSharp
 {
-    public class TmxLayer : ITmxElement
+    public class TmxLayer : ITmxElement, ITmxLayer
     {
         public string Name {get; private set;}
         public double Opacity {get; private set;}
         public bool Visible {get; private set;}
+        public int OrderIndex { get; private set; }
         public double OffsetX {get; private set;}
         public double OffsetY {get; private set;}
 
         public Collection<TmxLayerTile> Tiles {get; private set;}
         public PropertyDict Properties {get; private set;}
 
-        public TmxLayer(XElement xLayer, int width, int height)
+        public TmxLayer(XElement xLayer, int width, int height, int orderIndex)
         {
             Name = (string)xLayer.Attribute("name");
             Opacity = (double?)xLayer.Attribute("opacity") ?? 1.0;
             Visible = (bool?)xLayer.Attribute("visible") ?? true;
             OffsetX = (double?)xLayer.Attribute("offsetx") ?? 0.0;
             OffsetY = (double?)xLayer.Attribute("offsety") ?? 0.0;
+            OrderIndex = orderIndex;
 
             var xData = xLayer.Element("data");
             var encoding = (string)xData.Attribute("encoding");
