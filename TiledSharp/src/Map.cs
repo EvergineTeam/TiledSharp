@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using System.Globalization;
+using System.IO;
 
 namespace TiledSharp
 {
@@ -29,10 +30,23 @@ namespace TiledSharp
         public TmxList<TmxImageLayer> ImageLayers { get; private set; }
         public PropertyDict Properties { get; private set; }
 
+        public TmxMap(IDocumentLoader loader, Stream fileStream, string tmxDirectory)
+            : base(loader)
+        {
+            XDocument xDoc = ReadXml(fileStream, tmxDirectory);
+
+            this.ParseTmxMap(xDoc);
+        }
+
         public TmxMap(IDocumentLoader loader, string filename)
             : base(loader)
         {
             XDocument xDoc = ReadXml(filename);
+            this.ParseTmxMap(xDoc);
+        }
+
+        private void ParseTmxMap(XDocument xDoc)
+        {
             var xMap = xDoc.Element("map");
 
             Version = (string)xMap.Attribute("version");
@@ -98,7 +112,7 @@ namespace TiledSharp
                         Properties = new PropertyDict(child);
                         break;
                     case "tileset":
-                        Tilesets.Add(new TmxTileset(loader, child, TmxDirectory));
+                        Tilesets.Add(new TmxTileset(this.loader, child, TmxDirectory));
                         break;
                     case "layer":
                         Layers.Add(new TmxLayer(child, Width, Height, orderIndex++));

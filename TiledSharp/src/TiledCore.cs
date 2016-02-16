@@ -15,7 +15,7 @@ namespace TiledSharp
 {
     public class TmxDocument
     {
-        private IDocumentLoader loader;
+        protected IDocumentLoader loader;
 
         public string TmxDirectory { get; private set; }
 
@@ -28,6 +28,15 @@ namespace TiledSharp
         {
             XDocument xDoc = this.loader.Load(filepath);
             this.TmxDirectory = Path.GetDirectoryName(filepath);
+
+            return xDoc;
+        }
+
+        protected XDocument ReadXml(Stream fileStream, string tmxDirectory)
+        {
+            XDocument xDoc = XDocument.Load(fileStream);
+
+            this.TmxDirectory = tmxDirectory;
 
             return xDoc;
         }
@@ -73,7 +82,8 @@ namespace TiledSharp
 
             // For duplicate keys, append a counter
             // For pathological cases, insert underscores to ensure uniqueness
-            while (Contains(name)) {
+            while (Contains(name))
+            {
                 name = name + String.Concat(Enumerable.Repeat("_", dupes))
                             + count.ToString();
                 dupes++;
@@ -82,7 +92,7 @@ namespace TiledSharp
             return name;
         }
     }
-    
+
     public class PropertyDict : Dictionary<string, string>
     {
         public PropertyDict(XContainer xmlProp)
@@ -133,9 +143,9 @@ namespace TiledSharp
     public class TmxColor
     {
         public int A { get; private set; }
-        public int R {get; private set;}
-        public int G {get; private set;}
-        public int B {get; private set;}
+        public int R { get; private set; }
+        public int G { get; private set; }
+        public int B { get; private set; }
 
         public TmxColor(XAttribute xColor)
         {
