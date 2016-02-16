@@ -19,6 +19,7 @@ namespace TiledSharp
         public int TileHeight {get; private set;}
         public int Spacing {get; private set;}
         public int Margin {get; private set;}
+        public int? Columns {get; private set;}
         public int? TileCount {get; private set;}
         public int? Colums {get; private set;}
 
@@ -55,6 +56,7 @@ namespace TiledSharp
                 TileHeight = ts.TileHeight;
                 Spacing = ts.Spacing;
                 Margin = ts.Margin;
+                Columns = ts.Columns;
                 TileCount = ts.TileCount;
                 TileOffset = ts.TileOffset;
                 Image = ts.Image;
@@ -73,6 +75,7 @@ namespace TiledSharp
                 TileHeight = (int) xTileset.Attribute("tileheight");
                 Spacing = (int?) xTileset.Attribute("spacing") ?? 0;
                 Margin = (int?) xTileset.Attribute("margin") ?? 0;
+                Columns = (int?) xTileset.Attribute("columns");
                 TileCount = (int?) xTileset.Attribute("tilecount");
                 Colums = (int?) xTileset.Attribute("columns");
                 TileOffset = new TmxTileOffset(xTileset.Element("tileoffset"));
@@ -86,8 +89,7 @@ namespace TiledSharp
                 }
 
                 Tiles = new Collection<TmxTilesetTile>();
-                foreach (var xTile in xTileset.Elements("tile"))
-                {
+                foreach (var xTile in xTileset.Elements("tile")) {
                     var tile = new TmxTilesetTile(xTile, Terrains, tmxDir);
                     Tiles.Add(tile);
                 }

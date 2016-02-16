@@ -12,8 +12,12 @@ namespace TiledSharp
     public class TmxObjectGroup : ITmxElement, ITmxLayer
     {
         public string Name {get; private set;}
+
+        // TODO: Legacy (Tiled Java) attributes (x, y, width, height)
+
         public TmxColor Color {get; private set;}
         public DrawOrderType DrawOrder {get; private set;}
+
         public double Opacity {get; private set;}
         public bool Visible {get; private set;}
         public int OrderIndex { get; private set; }
@@ -25,10 +29,12 @@ namespace TiledSharp
 
         public TmxObjectGroup(XElement xObjectGroup, int orderIndex)
         {
-            Name = (string)xObjectGroup.Attribute("name") ?? String.Empty;
+            Name = (string) xObjectGroup.Attribute("name") ?? String.Empty;
             Color = new TmxColor(xObjectGroup.Attribute("color"));
-            Opacity = (double?)xObjectGroup.Attribute("opacity") ?? 1.0;
-            Visible = (bool?)xObjectGroup.Attribute("visible") ?? true;
+            Opacity = (double?) xObjectGroup.Attribute("opacity") ?? 1.0;
+            Visible = (bool?) xObjectGroup.Attribute("visible") ?? true;
+            OffsetX = (double?) xObjectGroup.Attribute("offsetx") ?? 0.0;
+            OffsetY = (double?) xObjectGroup.Attribute("offsety") ?? 0.0;
             OffsetX = (double?)xObjectGroup.Attribute("offsetx") ?? 0.0;
             OffsetY = (double?)xObjectGroup.Attribute("offsety") ?? 0.0;
             OrderIndex = orderIndex;
@@ -142,8 +148,8 @@ namespace TiledSharp
         public TmxObjectPoint(string s)
         {
             var pt = s.Split(',');
-            X = double.Parse(pt[0]);
-            Y = double.Parse(pt[1]);
+            X = double.Parse(pt[0], NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture);
+            Y = double.Parse(pt[1], NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture);
         }
     }
 
